@@ -14,6 +14,7 @@ dependencies:
   image_picker: ^1.0.7       # For crop disease image upload
   flutter_localizations:     # For multilingual support
     sdk: flutter
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -22,6 +23,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true  # Enable generation of localization files
+  
   # Uncomment and add assets if you have images:
   # assets:
   #   - assets/logo.png

@@ -1,0 +1,129 @@
+{
+    "appTitle": "Agrow",
+    "todaysWeather": "Today's Weather",
+    "hourlyForecast": "Hourly Forecast",
+    "currentTime": "Current Time: {time}",
+    "temperature": "{temp}°C",
+    "govtSchemes": "Govt. Subsidies and Schemes",
+    "govtSchemesDesc": "Check available government schemes and subsidies for farmers",
+    "expertConsultation": "Expert Consultation",
+    "expertConsultationDesc": "Connect with agricultural experts for personalized advice",
+    "warningAlert": "Thunderstorm warning",
+    "partlyCloudy": "Partly Cloudy",
+    "searchExperts": "Search experts by name or specialization...",
+    "applyNow": "Apply Now",
+    "details": "Details",
+    "remind": "Remind",
+    "location": "Mumbai",
+    "condition": "Partly Cloudy",
+    "forecast": "Forecast for {time}",
+    "forecastTemp": "{temp}°C",
+    "@currentTime": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "@temperature": {
+        "placeholders": {
+            "temp": {
+                "type": "int"
+            }
+        }
+    },
+    "@location": {
+        "description": "City name"
+    },
+    "@condition": {
+        "description": "Weather condition"
+    },
+    "@forecast": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "@forecastTemp": {
+        "placeholders": {
+            "temp": {
+                "type": "int"
+            }
+        }
+    },
+    "timeFormat": "{hour} {period}",
+    "am": "AM",
+    "pm": "PM",
+    "@timeFormat": {
+        "placeholders": {
+            "hour": {
+                "type": "int"
+            },
+            "period": {
+                "type": "String"
+            }
+        }
+    },
+    "warningMessage": "Thunderstorm warning",
+    "safe": "Safe",
+    "caution": "Caution",
+    "danger": "Danger",
+    "@warningMessage": {
+        "description": "Weather warning message"
+    },
+    "expertConsultationTitle": "Expert Consultation",
+    "searchExpertsHint": "Search experts by name or specialization...",
+    "filterAll": "All",
+    "filterCrops": "Crops",
+    "filterSoil": "Soil",
+    "filterGovt": "Govt.",
+    "noExpertsFound": "No experts found",
+    "tryDifferentSearch": "Try different search terms or filters",
+    "experienceLabel": "years of experience",
+    "feePerSession": "₹{amount}/30min",
+    "rating": "{score}",
+    "chatButton": "Chat",
+    "callButton": "Call",
+    "videoButton": "Video",
+    "@feePerSession": {
+        "placeholders": {
+            "amount": {
+                "type": "String"
+            }
+        }
+    },
+    "@rating": {
+        "placeholders": {
+            "score": {
+                "type": "double"
+            }
+        }
+    },
+    "expertName1": "Dr. Rajesh Kumar",
+    "expertName2": "Dr. Priya Sharma",
+    "expertName3": "Amit Patel",
+    
+    "expertSpec1": "Crop Disease Specialist",
+    "expertSpec2": "Soil Scientist",
+    "expertSpec3": "Government Scheme Advisor",
+    
+    "expertExp1": "15 years of experience in crop disease management and prevention",
+    "expertExp2": "Expert in soil health and fertility management",
+    "expertExp3": "Specialized in agricultural schemes and subsidies",
+    
+    "tagCrops": "Crops",
+    "tagDisease": "Disease Control",
+    "tagSoil": "Soil",
+    "tagFertility": "Fertility",
+    "tagGovt": "Government",
+    "tagSubsidies": "Subsidies",
+    
+    "expertType1": "Crops",
+    "expertType2": "Soil",
+    "expertType3": "Govt.",
+    "cropAdvisory": "Crop Advisory",
+    "cropAdvisoryDesc": "Get personalized crop recommendations based on your land and conditions",
+    "cropDisease": "Crop Disease Prediction",
+    "cropDiseaseDesc": "Identify crop diseases and get treatment recommendations"
+} 
