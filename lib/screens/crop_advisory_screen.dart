@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class CropAdvisoryScreen extends StatefulWidget {
   @override
@@ -21,6 +23,11 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   final List<String> areaUnits = ["Acres", "Hectares", "Square Meters"];
   String selectedAreaUnit = "Acres";
 
+  String? aiResponse;
+  bool isLoading = false;
+  final String apiKey = "AIzaSyAqnSFAI1M5ceD51u8FnBOsbFCfwuuCJn4";
+  final String apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent";
+
   @override
   void initState() {
     super.initState();
@@ -31,11 +38,94 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   }
 
   bool isFormValid() {
-    return (selectedCropMethod != null && selectedCrop != null) &&
+    print('Checking form validity:');
+    print('Crop Method: $selectedCropMethod, Crop: $selectedCrop');
+    print('Area: ${areaController.text}');
+    print('Irrigation Method Type: $selectedIrrigationMethodType, Method: $selectedIrrigationMethod');
+    print('Weather Method Type: $selectedWeatherMethodType, Weather: $selectedWeather');
+    
+    bool isValid = selectedCrop != null &&
+        selectedCrop!.isNotEmpty &&
         areaController.text.isNotEmpty &&
-        (selectedIrrigationMethodType != null && selectedIrrigationMethod != null) &&
-        (selectedWeatherMethodType != null && selectedWeather != null) &&
-        soilType.isNotEmpty;
+        selectedIrrigationMethod != null &&
+        selectedIrrigationMethod!.isNotEmpty &&
+        selectedWeather != null &&
+        selectedWeather!.isNotEmpty;
+    
+    print('Form is valid: $isValid');
+    return isValid;
+  }
+
+  Future<void> getGeminiResponse() async {
+    setState(() {
+      isLoading = true;
+      aiResponse = null;
+    });
+
+    final Map<String, dynamic> requestBody = {
+      "contents": [
+        {
+          "parts": [
+            {
+              "text": """You are an AI assistant for a Smart Agricultural Advisory System. Based on the following farming details, provide specific recommendations:
+
+Crop: ${selectedCrop}
+Land Area: ${areaController.text} ${selectedAreaUnit}
+Irrigation Method: ${selectedIrrigationMethod}
+Weather Condition: ${selectedWeather}
+Soil Type: ${soilType}
+
+generate without any bold or any other formatting
+
+Please provide detailed advice on:
+1. Optimal sowing & harvesting periods
+2. Irrigation strategies considering the current weather
+3. Fertilizer recommendations
+4. Pest & disease prevention measures
+5. Any specific considerations based on the irrigation method
+6. Sustainable farming practices for these conditions"""
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "temperature": 0.7,
+        "topK": 40,
+        "topP": 0.95,
+        "maxOutputTokens": 1024,
+      }
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse("$apiUrl?key=$apiKey"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        setState(() {
+          aiResponse = responseData['candidates']?.isNotEmpty == true
+              ? responseData['candidates'][0]['content']['parts'][0]['text']
+              : "No response from AI.";
+        });
+      } else {
+        setState(() {
+          aiResponse = "Error fetching data: ${response.statusCode}\n${response.body}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        aiResponse = "Error: $e";
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -373,9 +463,16 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   padding: EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: isFormValid() 
-                    ? () {
-                        // Handle form submission
-                      } 
+                    ? () async {
+                        // Add a print statement to debug
+                        print('Button pressed! Form is valid.');
+                        print('Selected Crop: $selectedCrop');
+                        print('Area: ${areaController.text} $selectedAreaUnit');
+                        print('Irrigation: $selectedIrrigationMethod');
+                        print('Weather: $selectedWeather');
+                        
+                        await getGeminiResponse(); // Make sure to await the API call
+                      }
                     : null,
                 child: Text(
                   'Get Advisory',
@@ -386,6 +483,19 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                 ),
               ),
             ),
+
+            // Add loading indicator and response section
+            SizedBox(height: 20),
+            if (isLoading)
+              Center(child: CircularProgressIndicator())
+            else if (aiResponse != null) ...[
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(aiResponse!),
+                ),
+              ),
+            ],
           ],
         ),
       ),
