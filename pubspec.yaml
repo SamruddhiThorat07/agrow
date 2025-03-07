@@ -15,6 +15,8 @@ dependencies:
   flutter_localizations:     # For multilingual support
     sdk: flutter
   intl: ^0.19.0
+  google_generative_ai: ^0.4.6
+  flutter_markdown: ^0.7.6+2
 
 dev_dependencies:
   flutter_test:
