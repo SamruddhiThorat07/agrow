@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../utils/color_schemes.dart';
 
 class CropAdvisoryScreen extends StatefulWidget {
   const CropAdvisoryScreen({super.key});
@@ -155,313 +156,323 @@ Please provide detailed advice on:
     final appLocalizations = AppLocalizations.of(context)!;
     
     return Scaffold(
-      appBar: AppBar(
-        title: Text(appLocalizations.cropAdvisoryTitle),
-        backgroundColor: const Color(0xFF8BC34A),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Section
-            Row(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColorSchemes.cropAdvisory['primary']!,
+              AppColorSchemes.cropAdvisory['secondary']!,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.eco, color: Color(0xFF8BC34A), size: 32),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        appLocalizations.getPersonalizedRecommendations,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        appLocalizations.fillDetailsBelow,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 24),
-
-            // Crop Selection
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                // Header Section
+                Row(
                   children: [
-                    Text(
-                      appLocalizations.cropSelection,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'list',
-                          groupValue: selectedCropMethod,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedCropMethod = value;
-                              selectedCrop = null; // Reset selection when changing method
-                            });
-                          },
-                        ),
-                        Text(appLocalizations.selectFromList),
-                        Radio<String>(
-                          value: 'manual',
-                          groupValue: selectedCropMethod,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedCropMethod = value;
-                              selectedCrop = null; // Reset selection when changing method
-                            });
-                          },
-                        ),
-                        Text(appLocalizations.enterManually),
-                      ],
-                    ),
-                    if (selectedCropMethod == 'list')
-                      _buildCropDropdown(appLocalizations),
-                    if (selectedCropMethod == 'manual')
-                      TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: appLocalizations.enterCropName,
-                        ),
-                        onChanged: (value) {
-                          setState(() => selectedCrop = value);
-                        },
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // Land Area Input
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      appLocalizations.landArea,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: areaController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: appLocalizations.enterArea,
+                    Icon(Icons.eco, color: Color(0xFF8BC34A), size: 32),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            appLocalizations.getPersonalizedRecommendations,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        _buildAreaUnitDropdown(appLocalizations),
-                      ],
+                          Text(
+                            appLocalizations.fillDetailsBelow,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ),
+                SizedBox(height: 24),
 
-            // Add this new Irrigation Method Card
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      appLocalizations.irrigationMethod,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
+                // Crop Selection
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Radio<String>(
-                          value: 'list',
-                          groupValue: selectedIrrigationMethodType,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedIrrigationMethodType = value;
-                              selectedIrrigationMethod = null; // Reset selection when changing method
-                            });
-                          },
+                        Text(
+                          appLocalizations.cropSelection,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        Text(appLocalizations.selectFromList),
-                        Radio<String>(
-                          value: 'manual',
-                          groupValue: selectedIrrigationMethodType,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedIrrigationMethodType = value;
-                              selectedIrrigationMethod = null; // Reset selection when changing method
-                            });
-                          },
+                        Row(
+                          children: [
+                            Radio<String>(
+                              value: 'list',
+                              groupValue: selectedCropMethod,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedCropMethod = value;
+                                  selectedCrop = null; // Reset selection when changing method
+                                });
+                              },
+                            ),
+                            Text(appLocalizations.selectFromList),
+                            Radio<String>(
+                              value: 'manual',
+                              groupValue: selectedCropMethod,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedCropMethod = value;
+                                  selectedCrop = null; // Reset selection when changing method
+                                });
+                              },
+                            ),
+                            Text(appLocalizations.enterManually),
+                          ],
                         ),
-                        Text(appLocalizations.enterManually),
+                        if (selectedCropMethod == 'list')
+                          _buildCropDropdown(appLocalizations),
+                        if (selectedCropMethod == 'manual')
+                          TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: appLocalizations.enterCropName,
+                            ),
+                            onChanged: (value) {
+                              setState(() => selectedCrop = value);
+                            },
+                          ),
                       ],
                     ),
-                    if (selectedIrrigationMethodType == 'list')
-                      _buildIrrigationDropdown(appLocalizations),
-                    if (selectedIrrigationMethodType == 'manual')
-                      TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: appLocalizations.enterIrrigationMethod,
-                        ),
-                        onChanged: (value) {
-                          setState(() => selectedIrrigationMethod = value);
-                        },
-                      ),
-                    SizedBox(height: 8),
-                    // Optional: Add irrigation method description
-                    if (selectedIrrigationMethod != null && 
-                        selectedIrrigationMethod == 'list')
-                      Text(
-                        getIrrigationDescription(selectedIrrigationMethod!),
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 16),
-
-            // Weather Conditions Card
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      appLocalizations.weatherConditions,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'list',
-                          groupValue: selectedWeatherMethodType,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedWeatherMethodType = value;
-                              selectedWeather = null; // Reset selection when changing method
-                            });
-                          },
-                        ),
-                        Text(appLocalizations.selectFromList),
-                        Radio<String>(
-                          value: 'manual',
-                          groupValue: selectedWeatherMethodType,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedWeatherMethodType = value;
-                              selectedWeather = null; // Reset selection when changing method
-                            });
-                          },
-                        ),
-                        Text(appLocalizations.enterManually),
-                      ],
-                    ),
-                    if (selectedWeatherMethodType == 'list')
-                      _buildWeatherDropdown(appLocalizations),
-                    if (selectedWeatherMethodType == 'manual')
-                      TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: appLocalizations.enterWeatherCondition,
-                        ),
-                        onChanged: (value) {
-                          setState(() => selectedWeather = value);
-                        },
-                      ),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 24),
-            
-            // Submit Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF8BC34A),
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                ),
-                onPressed: isFormValid() 
-                    ? () async {
-                        // Add a print statement to debug
-                        print('Button pressed! Form is valid.');
-                        print('Selected Crop: $selectedCrop');
-                        print('Area: ${areaController.text} $selectedAreaUnit');
-                        print('Irrigation: $selectedIrrigationMethod');
-                        print('Weather: $selectedWeather');
-                        
-                        await getGeminiResponse(); // Make sure to await the API call
-                      }
-                    : null,
-                child: Text(
-                  appLocalizations.getAdvisory,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
                   ),
                 ),
-              ),
-            ),
+                SizedBox(height: 16),
 
-            // Add loading indicator and response section
-            SizedBox(height: 20),
-            if (isLoading)
-              Center(child: CircularProgressIndicator())
-            else if (aiResponse != null) ...[
-              Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(aiResponse!),
+                // Land Area Input
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          appLocalizations.landArea,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: areaController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: appLocalizations.enterArea,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            _buildAreaUnitDropdown(appLocalizations),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ],
+
+                // Add this new Irrigation Method Card
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          appLocalizations.irrigationMethod,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Radio<String>(
+                              value: 'list',
+                              groupValue: selectedIrrigationMethodType,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedIrrigationMethodType = value;
+                                  selectedIrrigationMethod = null; // Reset selection when changing method
+                                });
+                              },
+                            ),
+                            Text(appLocalizations.selectFromList),
+                            Radio<String>(
+                              value: 'manual',
+                              groupValue: selectedIrrigationMethodType,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedIrrigationMethodType = value;
+                                  selectedIrrigationMethod = null; // Reset selection when changing method
+                                });
+                              },
+                            ),
+                            Text(appLocalizations.enterManually),
+                          ],
+                        ),
+                        if (selectedIrrigationMethodType == 'list')
+                          _buildIrrigationDropdown(appLocalizations),
+                        if (selectedIrrigationMethodType == 'manual')
+                          TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: appLocalizations.enterIrrigationMethod,
+                            ),
+                            onChanged: (value) {
+                              setState(() => selectedIrrigationMethod = value);
+                            },
+                          ),
+                        SizedBox(height: 8),
+                        // Optional: Add irrigation method description
+                        if (selectedIrrigationMethod != null && 
+                            selectedIrrigationMethod == 'list')
+                          Text(
+                            getIrrigationDescription(selectedIrrigationMethod!),
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 16),
+
+                // Weather Conditions Card
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          appLocalizations.weatherConditions,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Radio<String>(
+                              value: 'list',
+                              groupValue: selectedWeatherMethodType,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedWeatherMethodType = value;
+                                  selectedWeather = null; // Reset selection when changing method
+                                });
+                              },
+                            ),
+                            Text(appLocalizations.selectFromList),
+                            Radio<String>(
+                              value: 'manual',
+                              groupValue: selectedWeatherMethodType,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedWeatherMethodType = value;
+                                  selectedWeather = null; // Reset selection when changing method
+                                });
+                              },
+                            ),
+                            Text(appLocalizations.enterManually),
+                          ],
+                        ),
+                        if (selectedWeatherMethodType == 'list')
+                          _buildWeatherDropdown(appLocalizations),
+                        if (selectedWeatherMethodType == 'manual')
+                          TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: appLocalizations.enterWeatherCondition,
+                            ),
+                            onChanged: (value) {
+                              setState(() => selectedWeather = value);
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 24),
+                
+                // Submit Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF8BC34A),
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: isFormValid() 
+                        ? () async {
+                            // Add a print statement to debug
+                            print('Button pressed! Form is valid.');
+                            print('Selected Crop: $selectedCrop');
+                            print('Area: ${areaController.text} $selectedAreaUnit');
+                            print('Irrigation: $selectedIrrigationMethod');
+                            print('Weather: $selectedWeather');
+                            
+                            await getGeminiResponse(); // Make sure to await the API call
+                          }
+                        : null,
+                    child: Text(
+                      appLocalizations.getAdvisory,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Add loading indicator and response section
+                SizedBox(height: 20),
+                if (isLoading)
+                  Center(child: CircularProgressIndicator())
+                else if (aiResponse != null) ...[
+                  Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(aiResponse!),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
