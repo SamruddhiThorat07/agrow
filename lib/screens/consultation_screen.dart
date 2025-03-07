@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConsultationScreen extends StatefulWidget {
+  const ConsultationScreen({super.key});
+
   @override
   _ConsultationScreenState createState() => _ConsultationScreenState();
 }
@@ -60,9 +62,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Initialize selectedFilter with translated value if not already set
-    if (selectedFilter == null) {
-      selectedFilter = AppLocalizations.of(context)!.filterAll;
-    }
+    selectedFilter ??= AppLocalizations.of(context)!.filterAll;
   }
 
   @override
@@ -210,10 +210,10 @@ class ExpertCard extends StatelessWidget {
   final AppLocalizations appLocalizations;
 
   const ExpertCard({
-    Key? key,
+    super.key,
     required this.expert,
     required this.appLocalizations,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SubsidiesScreen extends StatefulWidget {
+  const SubsidiesScreen({super.key});
+
   @override
   _SubsidiesScreenState createState() => _SubsidiesScreenState();
 }
@@ -24,7 +27,7 @@ class _SubsidiesScreenState extends State<SubsidiesScreen> {
       'target': 'Organic Farmers',
       'isEligible': true,
       'deadline': '2024-03-15',
-      'applicationUrl': 'https://soilhealth.gov.in/',
+      'applicationUrl': 'https://soilhealth.dac.gov.in/',
     },
     {
       'title': 'Pradhan Mantri Fasal Bima Yojana',
@@ -166,9 +169,17 @@ class _SubsidiesScreenState extends State<SubsidiesScreen> {
                         children: [
                           ElevatedButton.icon(
                             icon: Icon(Icons.launch),
-                            label: Text('Apply Now'),
-                            onPressed: () {
-                              // Launch application URL
+                            label: Text('Visit Website'),
+                            onPressed: () async {
+                              final urlString = scheme['applicationUrl'];
+                              final url = Uri.parse(urlString);
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Could not launch $urlString')),
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: isDeadlineClose 

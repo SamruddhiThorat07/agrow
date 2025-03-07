@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CropDiseaseScreen extends StatefulWidget {
+  const CropDiseaseScreen({super.key});
+
   @override
   _CropDiseaseScreenState createState() => _CropDiseaseScreenState();
 }

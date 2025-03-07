@@ -4,6 +4,8 @@ import 'consultation_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'crop_advisory_screen.dart';
 import 'crop_disease_screen.dart';
+import 'weather_screen.dart';
+import 'market_screen.dart';
 
 // Update mock data with weather-specific icons and more time slots
 Map<String, dynamic> mockWeatherData = {
@@ -26,7 +28,7 @@ Map<String, dynamic> mockWeatherData = {
 class HomeScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;  // Add this
 
-  const HomeScreen({Key? key, required this.onLocaleChange}) : super(key: key);
+  const HomeScreen({super.key, required this.onLocaleChange});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -75,6 +77,45 @@ class _HomeScreenState extends State<HomeScreen> {
         "color": Colors.red
       };
     }
+  }
+
+  Widget _buildFeatureCard({
+    required String title,
+    required IconData icon,
+    required Color backgroundColor,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 40,
+                color: backgroundColor,
+              ),
+              SizedBox(height: 12),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -281,192 +322,53 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-              SizedBox(height: 16),
+              SizedBox(height: 24),
 
-              // Add this new Crop Advisory Card
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CropAdvisoryScreen()),
-                  );
-                },
-                child: Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.eco,
-                              size: 24,
-                              color: lightGreen,
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              appLocalizations.cropAdvisory,  // Add this to your localizations
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          appLocalizations.cropAdvisoryDesc,  // Add this to your localizations
-                          style: TextStyle(
-                            color: const Color(0xFF9E9E9E),
-                          ),
-                        ),
-                      ],
+              // Grid of feature cards
+              GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  _buildFeatureCard(
+                    title: appLocalizations.cropDisease,
+                    icon: Icons.healing,
+                    backgroundColor: Colors.amber,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CropDiseaseScreen()),
                     ),
                   ),
-                ),
-              ),
-
-              SizedBox(height: 16),
-
-              // Add this new Crop Disease Card
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CropDiseaseScreen()),
-                  );
-                },
-                child: Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.healing,
-                              size: 24,
-                              color: lightGreen,
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              appLocalizations.cropDisease,  // Add to localizations
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          appLocalizations.cropDiseaseDesc,  // Add to localizations
-                          style: TextStyle(
-                            color: const Color(0xFF9E9E9E),
-                          ),
-                        ),
-                      ],
+                  _buildFeatureCard(
+                    title: appLocalizations.cropAdvisory,
+                    icon: Icons.eco,
+                    backgroundColor: Colors.teal,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CropAdvisoryScreen()),
                     ),
                   ),
-                ),
-              ),
-
-              SizedBox(height: 16),
-
-              // Government Subsidies and Schemes
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SubsidiesScreen()),
-                  );
-                },
-                child: Card(
-                  elevation: 2,  // Lighter shadow
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.policy,
-                              size: 24,
-                              color: lightGreen,  // Update to theme color
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              appLocalizations.govtSchemes,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          appLocalizations.govtSchemesDesc,
-                          style: TextStyle(
-                            color: const Color(0xFF9E9E9E),
-                          ),
-                        ),
-                      ],
+                  _buildFeatureCard(
+                    title: appLocalizations.govtSchemes,
+                    icon: Icons.policy,
+                    backgroundColor: Colors.purple,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SubsidiesScreen()),
                     ),
                   ),
-                ),
-              ),
-
-              SizedBox(height: 16),
-
-              // Expert Consultation
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ConsultationScreen()),
-                  );
-                },
-                child: Card(
-                  elevation: 2,  // Lighter shadow
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.support_agent,
-                              size: 24,
-                              color: lightGreen,  // Update to theme color
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              appLocalizations.expertConsultation,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          appLocalizations.expertConsultationDesc,
-                          style: TextStyle(
-                            color: const Color(0xFF9E9E9E),
-                          ),
-                        ),
-                      ],
+                  _buildFeatureCard(
+                    title: appLocalizations.expertConsultation,
+                    icon: Icons.support_agent,
+                    backgroundColor: Colors.blue,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ConsultationScreen()),
                     ),
                   ),
-                ),
+                ],
               ),
             ],
           ),

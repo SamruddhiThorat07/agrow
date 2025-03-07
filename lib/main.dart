@@ -8,6 +8,8 @@ void main() {
 }
 
 class WeatherApp extends StatefulWidget {
+  const WeatherApp({super.key});
+
   @override
   _WeatherAppState createState() => _WeatherAppState();
 }
@@ -25,6 +27,7 @@ class _WeatherAppState extends State<WeatherApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Agrow',
+      debugShowCheckedModeBanner: false,
       locale: _locale,
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CropAdvisoryScreen extends StatefulWidget {
+  const CropAdvisoryScreen({super.key});
+
   @override
   _CropAdvisoryScreenState createState() => _CropAdvisoryScreenState();
 }
@@ -17,11 +20,30 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   TextEditingController areaController = TextEditingController();
   String soilType = "Loam"; // Default value
 
-  final List<String> crops = ["Wheat", "Rice", "Cotton", "Sugarcane", "Maize"];
-  final List<String> irrigationMethods = ["Drip", "Sprinkler", "Flood", "Furrow"];
-  final List<String> weatherConditions = ["Sunny", "Rainy", "Cloudy", "Windy"];
-  final List<String> areaUnits = ["Acres", "Hectares", "Square Meters"];
-  String selectedAreaUnit = "Acres";
+  final List<String> crops = [
+    "wheat", "rice", "cotton", "sugarcane", "maize",
+    "soybean", "potato", "tomato", "onion", "groundnut",
+    "chickpea", "mustard", "sunflower", "turmeric", "ginger",
+    "garlic", "chili", "cauliflower", "cabbage", "carrot",
+    "peas", "beans", "cucumber", "eggplant", "okra"
+  ];
+
+  final List<String> irrigationMethods = [
+    "drip", "sprinkler", "flood", "furrow", "centerPivot",
+    "subsurfaceDrip", "microSprinkler", "surface", "basin", "borderStrip"
+  ];
+
+  final List<String> weatherConditions = [
+    "sunny", "partlyCloudy", "overcast", "lightRain", "heavyRain",
+    "thunderstorm", "windy", "hotHumid", "coldDry", "foggy",
+    "hazy", "drought", "highTemp", "lowTemp"
+  ];
+
+  final List<String> areaUnits = [
+    "acres", "hectares", "squareMeters", "squareFeet", "guntha", "bigha"
+  ];
+
+  String selectedAreaUnit = "acres";
 
   String? aiResponse;
   bool isLoading = false;
@@ -69,11 +91,11 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             {
               "text": """You are an AI assistant for a Smart Agricultural Advisory System. Based on the following farming details, provide specific recommendations:
 
-Crop: ${selectedCrop}
-Land Area: ${areaController.text} ${selectedAreaUnit}
-Irrigation Method: ${selectedIrrigationMethod}
-Weather Condition: ${selectedWeather}
-Soil Type: ${soilType}
+Crop: $selectedCrop
+Land Area: ${areaController.text} $selectedAreaUnit
+Irrigation Method: $selectedIrrigationMethod
+Weather Condition: $selectedWeather
+Soil Type: $soilType
 
 generate without any bold or any other formatting
 
@@ -130,9 +152,11 @@ Please provide detailed advice on:
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crop Advisory'),
+        title: Text(appLocalizations.cropAdvisoryTitle),
         backgroundColor: const Color(0xFF8BC34A),
       ),
       body: SingleChildScrollView(
@@ -150,14 +174,14 @@ Please provide detailed advice on:
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Get Personalized Crop Recommendations',
+                        appLocalizations.getPersonalizedRecommendations,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        'Fill in the details below for customized advisory',
+                        appLocalizations.fillDetailsBelow,
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 14,
@@ -178,7 +202,7 @@ Please provide detailed advice on:
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Crop Selection',
+                      appLocalizations.cropSelection,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -196,7 +220,7 @@ Please provide detailed advice on:
                             });
                           },
                         ),
-                        Text('Select from list'),
+                        Text(appLocalizations.selectFromList),
                         Radio<String>(
                           value: 'manual',
                           groupValue: selectedCropMethod,
@@ -207,32 +231,16 @@ Please provide detailed advice on:
                             });
                           },
                         ),
-                        Text('Enter manually'),
+                        Text(appLocalizations.enterManually),
                       ],
                     ),
                     if (selectedCropMethod == 'list')
-                      DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        hint: Text('Select crop'),
-                        value: selectedCrop,
-                        items: crops.map((String crop) {
-                          return DropdownMenuItem(
-                            value: crop,
-                            child: Text(crop),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() => selectedCrop = value);
-                        },
-                      ),
+                      _buildCropDropdown(appLocalizations),
                     if (selectedCropMethod == 'manual')
                       TextField(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Enter crop name',
+                          hintText: appLocalizations.enterCropName,
                         ),
                         onChanged: (value) {
                           setState(() => selectedCrop = value);
@@ -252,7 +260,7 @@ Please provide detailed advice on:
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Land Area',
+                      appLocalizations.landArea,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -267,23 +275,12 @@ Please provide detailed advice on:
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
-                              hintText: 'Enter area',
+                              hintText: appLocalizations.enterArea,
                             ),
                           ),
                         ),
                         SizedBox(width: 8),
-                        DropdownButton<String>(
-                          value: selectedAreaUnit,
-                          items: areaUnits.map((String unit) {
-                            return DropdownMenuItem(
-                              value: unit,
-                              child: Text(unit),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() => selectedAreaUnit = value!);
-                          },
-                        ),
+                        _buildAreaUnitDropdown(appLocalizations),
                       ],
                     ),
                   ],
@@ -299,7 +296,7 @@ Please provide detailed advice on:
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Irrigation Method',
+                      appLocalizations.irrigationMethod,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -318,7 +315,7 @@ Please provide detailed advice on:
                             });
                           },
                         ),
-                        Text('Select from list'),
+                        Text(appLocalizations.selectFromList),
                         Radio<String>(
                           value: 'manual',
                           groupValue: selectedIrrigationMethodType,
@@ -329,32 +326,16 @@ Please provide detailed advice on:
                             });
                           },
                         ),
-                        Text('Enter manually'),
+                        Text(appLocalizations.enterManually),
                       ],
                     ),
                     if (selectedIrrigationMethodType == 'list')
-                      DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        hint: Text('Select irrigation method'),
-                        value: selectedIrrigationMethod,
-                        items: irrigationMethods.map((String method) {
-                          return DropdownMenuItem(
-                            value: method,
-                            child: Text(method),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() => selectedIrrigationMethod = value);
-                        },
-                      ),
+                      _buildIrrigationDropdown(appLocalizations),
                     if (selectedIrrigationMethodType == 'manual')
                       TextField(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Enter irrigation method',
+                          hintText: appLocalizations.enterIrrigationMethod,
                         ),
                         onChanged: (value) {
                           setState(() => selectedIrrigationMethod = value);
@@ -386,7 +367,7 @@ Please provide detailed advice on:
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Weather Conditions',
+                      appLocalizations.weatherConditions,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -405,7 +386,7 @@ Please provide detailed advice on:
                             });
                           },
                         ),
-                        Text('Select from list'),
+                        Text(appLocalizations.selectFromList),
                         Radio<String>(
                           value: 'manual',
                           groupValue: selectedWeatherMethodType,
@@ -416,32 +397,16 @@ Please provide detailed advice on:
                             });
                           },
                         ),
-                        Text('Enter manually'),
+                        Text(appLocalizations.enterManually),
                       ],
                     ),
                     if (selectedWeatherMethodType == 'list')
-                      DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        hint: Text('Select weather condition'),
-                        value: selectedWeather,
-                        items: weatherConditions.map((String weather) {
-                          return DropdownMenuItem(
-                            value: weather,
-                            child: Text(weather),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() => selectedWeather = value);
-                        },
-                      ),
+                      _buildWeatherDropdown(appLocalizations),
                     if (selectedWeatherMethodType == 'manual')
                       TextField(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Enter weather condition',
+                          hintText: appLocalizations.enterWeatherCondition,
                         ),
                         onChanged: (value) {
                           setState(() => selectedWeather = value);
@@ -475,7 +440,7 @@ Please provide detailed advice on:
                       }
                     : null,
                 child: Text(
-                  'Get Advisory',
+                  appLocalizations.getAdvisory,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
@@ -505,16 +470,188 @@ Please provide detailed advice on:
   // Add this helper method for irrigation descriptions
   String getIrrigationDescription(String method) {
     switch (method) {
-      case 'Drip':
-        return 'Water-efficient method that delivers water directly to plant roots';
-      case 'Sprinkler':
-        return 'Overhead irrigation that simulates rainfall';
-      case 'Flood':
-        return 'Traditional method of flooding the entire field';
-      case 'Furrow':
-        return 'Water flows through small channels between crop rows';
+      case 'drip':
+        return 'Water-efficient method that delivers water directly to plant roots through a network of pipes';
+      case 'sprinkler':
+        return 'Overhead irrigation that simulates rainfall, suitable for many types of crops';
+      case 'flood':
+        return 'Traditional method of flooding the entire field, commonly used in rice cultivation';
+      case 'furrow':
+        return 'Water flows through small channels between crop rows, good for row crops';
+      case 'centerPivot':
+        return 'Mechanized sprinkler system that rotates around a central pivot, ideal for large fields';
+      case 'subsurfaceDrip':
+        return 'Underground drip system that reduces water evaporation and promotes deep root growth';
+      case 'microSprinkler':
+        return 'Low-pressure sprinklers providing uniform water distribution for orchards and vegetables';
+      case 'surface':
+        return 'Traditional method where water flows over the soil surface by gravity';
+      case 'basin':
+        return 'Method where level areas are flooded with water, suitable for orchards';
+      case 'borderStrip':
+        return 'Long rectangular strips with raised borders for controlled flooding';
       default:
         return '';
+    }
+  }
+
+  Widget _buildCropDropdown(AppLocalizations localizations) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+      ),
+      hint: Text(localizations.selectCrop),
+      value: selectedCrop,
+      items: crops.map((String cropKey) {
+        // Use switch statement instead of reflection
+        String translation = _getCropTranslation(localizations, cropKey);
+        return DropdownMenuItem(
+          value: cropKey,
+          child: Text(translation),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() => selectedCrop = value);
+      },
+    );
+  }
+
+  Widget _buildIrrigationDropdown(AppLocalizations localizations) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+      ),
+      hint: Text(localizations.selectIrrigationMethod),
+      value: selectedIrrigationMethod,
+      items: irrigationMethods.map((String methodKey) {
+        String translation = _getIrrigationTranslation(localizations, methodKey);
+        return DropdownMenuItem(
+          value: methodKey,
+          child: Text(translation),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() => selectedIrrigationMethod = value);
+      },
+    );
+  }
+
+  Widget _buildWeatherDropdown(AppLocalizations localizations) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+      ),
+      hint: Text(localizations.selectWeatherCondition),
+      value: selectedWeather,
+      items: weatherConditions.map((String weatherKey) {
+        String translation = _getWeatherTranslation(localizations, weatherKey);
+        return DropdownMenuItem(
+          value: weatherKey,
+          child: Text(translation),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() => selectedWeather = value);
+      },
+    );
+  }
+
+  Widget _buildAreaUnitDropdown(AppLocalizations localizations) {
+    return DropdownButton<String>(
+      value: selectedAreaUnit,
+      items: areaUnits.map((String unitKey) {
+        String translation = _getAreaUnitTranslation(localizations, unitKey);
+        return DropdownMenuItem(
+          value: unitKey,
+          child: Text(translation),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() => selectedAreaUnit = value!);
+      },
+    );
+  }
+
+  // Helper methods for translations
+  String _getCropTranslation(AppLocalizations localizations, String key) {
+    switch (key) {
+      case 'wheat': return localizations.cropsWheat;
+      case 'rice': return localizations.cropsRice;
+      case 'cotton': return localizations.cropsCotton;
+      case 'sugarcane': return localizations.cropsSugarcane;
+      case 'maize': return localizations.cropsMaize;
+      case 'soybean': return localizations.cropsSoybean;
+      case 'potato': return localizations.cropsPotato;
+      case 'tomato': return localizations.cropsTomato;
+      case 'onion': return localizations.cropsOnion;
+      case 'groundnut': return localizations.cropsGroundnut;
+      case 'chickpea': return localizations.cropsChickpea;
+      case 'mustard': return localizations.cropsMustard;
+      case 'sunflower': return localizations.cropsSunflower;
+      case 'turmeric': return localizations.cropsTurmeric;
+      case 'ginger': return localizations.cropsGinger;
+      case 'garlic': return localizations.cropsGarlic;
+      case 'chili': return localizations.cropsChili;
+      case 'cauliflower': return localizations.cropsCauliflower;
+      case 'cabbage': return localizations.cropsCabbage;
+      case 'carrot': return localizations.cropsCarrot;
+      case 'peas': return localizations.cropsPeas;
+      case 'beans': return localizations.cropsBeans;
+      case 'cucumber': return localizations.cropsCucumber;
+      case 'eggplant': return localizations.cropsEggplant;
+      case 'okra': return localizations.cropsOkra;
+      default: return key;
+    }
+  }
+
+  String _getIrrigationTranslation(AppLocalizations localizations, String key) {
+    switch (key) {
+      case 'drip': return localizations.irrigationTypesDrip;
+      case 'sprinkler': return localizations.irrigationTypesSprinkler;
+      case 'flood': return localizations.irrigationTypesFlood;
+      case 'furrow': return localizations.irrigationTypesFurrow;
+      case 'centerPivot': return localizations.irrigationTypesCenterPivot;
+      case 'subsurfaceDrip': return localizations.irrigationTypesSubsurfaceDrip;
+      case 'microSprinkler': return localizations.irrigationTypesMicroSprinkler;
+      case 'surface': return localizations.irrigationTypesSurface;
+      case 'basin': return localizations.irrigationTypesBasin;
+      case 'borderStrip': return localizations.irrigationTypesBorderStrip;
+      default: return key;
+    }
+  }
+
+  String _getWeatherTranslation(AppLocalizations localizations, String key) {
+    switch (key) {
+      case 'sunny': return localizations.weatherTypesSunny;
+      case 'partlyCloudy': return localizations.weatherTypesPartlyCloudy;
+      case 'overcast': return localizations.weatherTypesOvercast;
+      case 'lightRain': return localizations.weatherTypesLightRain;
+      case 'heavyRain': return localizations.weatherTypesHeavyRain;
+      case 'thunderstorm': return localizations.weatherTypesThunderstorm;
+      case 'windy': return localizations.weatherTypesWindy;
+      case 'hotHumid': return localizations.weatherTypesHotHumid;
+      case 'coldDry': return localizations.weatherTypesColdDry;
+      case 'foggy': return localizations.weatherTypesFoggy;
+      case 'hazy': return localizations.weatherTypesHazy;
+      case 'drought': return localizations.weatherTypesDrought;
+      case 'highTemp': return localizations.weatherTypesHighTemp;
+      case 'lowTemp': return localizations.weatherTypesLowTemp;
+      default: return key;
+    }
+  }
+
+  String _getAreaUnitTranslation(AppLocalizations localizations, String key) {
+    switch (key) {
+      case 'acres': return localizations.areaUnitsAcres;
+      case 'hectares': return localizations.areaUnitsHectares;
+      case 'squareMeters': return localizations.areaUnitsSquareMeters;
+      case 'squareFeet': return localizations.areaUnitsSquareFeet;
+      case 'guntha': return localizations.areaUnitsGuntha;
+      case 'bigha': return localizations.areaUnitsBigha;
+      default: return key;
     }
   }
 } 
