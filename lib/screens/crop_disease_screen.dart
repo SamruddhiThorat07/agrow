@@ -13,6 +13,7 @@ class _CropDiseaseScreenState extends State<CropDiseaseScreen> {
   final ImagePicker _picker = ImagePicker();
   Uint8List? _imageBytes;
   String _response = "Upload an image to get results"; // AI Response
+  bool _isLoading = false; // Add this line near other state variables
 
   final String _instructionPrompt = '''You are an expert AI in crop disease identification and treatment.
 - You will receive an image of a diseased crop.
@@ -50,6 +51,11 @@ dont add numbers add bullets''';
   }
 
   Future<void> _sendToGemini(Uint8List imageBytes) async {
+    setState(() {
+      _isLoading = true;
+      _response = "Processing image...";
+    });
+
     const String apiKey = "AIzaSyAqnSFAI1M5ceD51u8FnBOsbFCfwuuCJn4"; // Replace with your API key
     const String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent?key=$apiKey";
 
@@ -94,6 +100,10 @@ dont add numbers add bullets''';
     } catch (e) {
       setState(() {
         _response = "Error sending request: $e";
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
@@ -192,10 +202,22 @@ dont add numbers add bullets''';
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.grey),
               ),
-              child: Text(
-                _response,
-                style: TextStyle(fontSize: 16),
-              ),
+              child: _isLoading
+                  ? Center(
+                      child: Column(
+                        children: [
+                          CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8BC34A)),
+                          ),
+                          SizedBox(height: 16),
+                          Text('Analyzing image...'),
+                        ],
+                      ),
+                    )
+                  : Text(
+                      _response,
+                      style: TextStyle(fontSize: 16),
+                    ),
             ),
           ],
         ),
