@@ -4,6 +4,7 @@ import 'consultation_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'crop_advisory_screen.dart';
 import 'crop_disease_screen.dart';
+import 'pesticide_screen.dart';
 
 // Update mock data with weather-specific icons and more time slots
 Map<String, dynamic> mockWeatherData = {
@@ -13,13 +14,13 @@ Map<String, dynamic> mockWeatherData = {
   "icon": Icons.cloud,
   "warnings": "warningMessage",
   "forecast": [
-    {"time": "3 AM", "temp": 26, "icon": Icons.nights_stay},         // Night
-    {"time": "6 AM", "temp": 28, "icon": Icons.cloud_queue},         // Dawn
-    {"time": "9 AM", "temp": 30, "icon": Icons.wb_sunny},            // Morning
-    {"time": "12 PM", "temp": 32, "icon": Icons.thunderstorm},       // Noon
-    {"time": "3 PM", "temp": 31, "icon": Icons.wb_sunny},            // Afternoon
-    {"time": "6 PM", "temp": 29, "icon": Icons.water_drop},          // Evening
-    {"time": "9 PM", "temp": 27, "icon": Icons.nights_stay},         // Night
+    {"time": "03:00", "temp": 26, "icon": Icons.nights_stay},
+    {"time": "06:00", "temp": 28, "icon": Icons.cloud_queue},
+    {"time": "09:00", "temp": 30, "icon": Icons.wb_sunny},
+    {"time": "12:00", "temp": 32, "icon": Icons.thunderstorm},
+    {"time": "15:00", "temp": 31, "icon": Icons.wb_sunny},
+    {"time": "18:00", "temp": 29, "icon": Icons.water_drop},
+    {"time": "21:00", "temp": 27, "icon": Icons.nights_stay},
   ]
 };
 
@@ -133,27 +134,48 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Weather Info Box
+              // Weather Info Box with improved UI
               Card(
-                elevation: 2,  // Lighter shadow
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: weatherBlue.withOpacity(0.1)),
-                    color: weatherBlue.withOpacity(0.05),  // Light blue background
+                    borderRadius: BorderRadius.circular(15),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        weatherBlue.withOpacity(0.05),
+                        weatherBlue.withOpacity(0.1),
+                      ],
+                    ),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          appLocalizations.todaysWeather,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              appLocalizations.todaysWeather,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Icon(
+                              mockWeatherData['icon'],
+                              size: 36,
+                              color: weatherBlue,
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -162,41 +184,39 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   appLocalizations.location,
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
+                                  ),
                                 ),
                                 Text(
                                   appLocalizations.temperature(
                                     mockWeatherData['temperature']
                                   ),
                                   style: TextStyle(
-                                    fontSize: 32,
+                                    fontSize: 36,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
                                   ),
                                 ),
                               ],
                             ),
-                            Row(
-                              children: [
-                                Icon(
-                                  mockWeatherData['icon'],
-                                  size: 32,
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: weatherBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                appLocalizations.condition,
+                                style: TextStyle(
+                                  fontSize: 16,
                                   color: weatherBlue,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                SizedBox(width: 8),
-                                Text(
-                                  appLocalizations.condition,
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ],
+                              ),
                             ),
                           ],
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          appLocalizations.currentTime(
-                            '${currentTime.hour}:${currentTime.minute}'
-                          ),
-                          style: TextStyle(color: const Color(0xFF9E9E9E)),
                         ),
                       ],
                     ),
@@ -204,45 +224,71 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 16),
+              SizedBox(height: 24),
 
-              // Hourly Forecast
+              // Hourly Forecast with horizontal scroll
               Text(
                 appLocalizations.hourlyForecast,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-              SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: (mockWeatherData['forecast'] as List).map((forecast) {
-                  return Card(
-                    elevation: 2,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            appLocalizations.timeFormat(
-                              int.parse(forecast['time'].split(' ')[0]),
-                              forecast['time'].contains('AM') ? 
-                                appLocalizations.am : appLocalizations.pm
+              SizedBox(height: 12),
+              SizedBox(
+                height: 120,
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: mockWeatherData['forecast'].length,
+                    itemBuilder: (context, index) {
+                      final forecast = mockWeatherData['forecast'][index];
+                      return Container(
+                        margin: EdgeInsets.only(right: 12),
+                        width: 80,
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  forecast['time'],
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Icon(
+                                  forecast['icon'],
+                                  size: 24,
+                                  color: weatherBlue,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  '${forecast['temp']}°',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(height: 4),
-                          Icon(
-                            forecast['icon'],
-                            size: 24,
-                            color: weatherBlue,
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            appLocalizations.forecastTemp(forecast['temp']),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
 
               SizedBox(height: 16),
@@ -468,6 +514,63 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+
+              // Pesticide Advisory Feature Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PesticideScreen()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.pest_control,
+                              color: Color(0xFF8BC34A),
+                              size: 32,
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              'Pesticide Advisory',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          'Get personalized recommendations for pest control based on your crop and region',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Color(0xFF8BC34A),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
             ],
           ),
         ),
