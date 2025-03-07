@@ -414,65 +414,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(builder: (context) => ConsultationScreen()),
                     ),
                   ),
-                ],
-              ),
-
-              // Pesticide Advisory Feature Card
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
+                  _buildFeatureCard(
+                    title: 'Pesticide Advisory',
+                    icon: Icons.pest_control,
+                    backgroundColor: Colors.orange,
+                    onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => PesticideScreen()),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.pest_control,
-                              color: Color(0xFF8BC34A),
-                              size: 32,
-                            ),
-                            SizedBox(width: 12),
-                            Text(
-                              'Pesticide Advisory',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          'Get personalized recommendations for pest control based on your crop and region',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        SizedBox(height: 12),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Icon(
-                            Icons.arrow_forward,
-                            color: Color(0xFF8BC34A),
-                          ),
-                        ),
-                      ],
                     ),
                   ),
-                ),
+                ],
               ),
-              SizedBox(height: 16),
             ],
           ),
         ),
